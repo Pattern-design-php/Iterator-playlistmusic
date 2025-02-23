@@ -1,0 +1,7 @@
+/* background.css */
+.bg-primary {
+    background-color: var(--primary); 
+    color: var(--white); 
+    padding: 20px;
+    text-align: center;
+}
