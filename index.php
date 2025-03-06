@@ -1,7 +1,6 @@
 <?php
 require __DIR__ . '/autoload.php';
 session_start();
-$list_music = include 'src/view/list_music/index.php';
 ?>
 
 <!DOCTYPE html>
@@ -15,7 +14,7 @@ $list_music = include 'src/view/list_music/index.php';
 </head>
 
 <body>
-    <?php $list_music ?>
+    <?php  include 'src/view/list.php'; ?>
 </body>
 
 </html>
