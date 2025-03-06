@@ -61,9 +61,9 @@ $currentSong = $iterator->current();
 
     <div class="flex flex-row justify-end items-center py-0 px-4">
         <form method="post" class="controls flex flex-row items-center gap-2">
-            <button class="py-1 px-4" type="submit" name="prev">⏮️ Previous</button>
+            <button class="py-1 px-4" type="submit" name="prev" style="<?php echo !$iterator->hasPrev() ? 'opacity: 0.5; cursor: not-allowed;' : '' ?>">⏮️ Previous</button>
             <p><?= $_SESSION['current_index'] + 1; ?> of <?= count($songs); ?></p>
-            <button class="py-1 px-4" type="submit" name="next">⏭️ Next</button>
+            <button class="py-1 px-4" type="submit" name="next" style="<?php echo !$iterator->hasNext() ? 'opacity: 0.5; cursor: not-allowed;' : '' ?>">⏭️ Next</button>
         </form>
     </div>
 </div>
