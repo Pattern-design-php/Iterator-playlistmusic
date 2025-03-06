@@ -2,31 +2,39 @@
 
 use Iterator\Playlist;
 use Iterator\Song;
+use Iterator\SongIterator;
 
 // Initialize Playlist
 $playlist = new Playlist();
-$playlist->addSong(new Song("Shape of You", "Ed Sheeran"));
-$playlist->addSong(new Song("Blinding Lights", "The Weeknd"));
-$playlist->addSong(new Song("Levitating", "Dua Lipa"));
+$playlist->addSong(new Song("Time To Rise", "Mann Vannda"));
+$playlist->addSong(new Song("Send To Ex", "Mann Vannda"));
+$playlist->addSong(new Song("មេឃបើកថ្ងៃ", "KWAN ft. Vannda"));
 
 // Get Playlist Songs
 $songs = $playlist->getSongs();
 
-// Get Current Song Index from Session
-$currentIndex = $_SESSION['current_index'] ?? 0;
+// Initialize SongIterator with current index from session
+$iterator = new SongIterator($playlist, $_SESSION['current_index'] ?? 0);
 
-// Handle Next/Previous Controls
+// Handle POST requests for navigation
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['next'])) {
-        $currentIndex = ($currentIndex + 1) % count($songs);
+        // Move to next song if possible
+        if ($iterator->hasNext()) {
+            $iterator->next(); // Move to next song
+            $_SESSION['current_index'] = $iterator->getCurrentIndex(); // Update session index
+        }
     } elseif (isset($_POST['prev'])) {
-        $currentIndex = ($currentIndex - 1 + count($songs)) % count($songs);
+        // Move to previous song if possible
+        if ($iterator->hasPrev()) {
+            $iterator->prev(); // Move to previous song
+            $_SESSION['current_index'] = $iterator->getCurrentIndex(); // Update session index
+        }
     }
-    $_SESSION['current_index'] = $currentIndex;
 }
 
-// Get Current Song
-$currentSong = $songs[$currentIndex];
+// Get the current song from the iterator
+$currentSong = $iterator->current();
 ?>
 
 <div>
@@ -42,9 +50,9 @@ $currentSong = $songs[$currentIndex];
                 <th>Artist</th>
             </tr>
             <?php foreach ($songs as $index => $song): ?>
-                <tr style="background: <?= $index == $currentIndex ? '#d3d3d3' : 'white' ?>;">
+                <tr class="<?= $index == $_SESSION['current_index'] ? 'active' : '' ?>" style="background: <?= $index == $_SESSION['current_index'] ? '#d3d3d3' : 'white' ?>;">
                     <td><?= $index + 1 ?></td>
-                    <td><?= \htmlspecialchars($song->title) ?></td>
+                    <td><?= htmlspecialchars($song->title) ?></td>
                     <td><?= htmlspecialchars($song->artist) ?></td>
                 </tr>
             <?php endforeach; ?>
@@ -52,11 +60,9 @@ $currentSong = $songs[$currentIndex];
     </div>
 
     <div class="flex flex-row justify-end items-center py-0 px-4">
-        <!-- <h3>Now Playing: <span><?= htmlspecialchars($currentSong->title) ?></span> by <span><?= htmlspecialchars($currentSong->artist) ?></span></h3> -->
-
         <form method="post" class="controls flex flex-row items-center gap-2">
             <button class="py-1 px-4" type="submit" name="prev">⏮️ Previous</button>
-            <p><?php echo $currentIndex + 1; ?>/ <?php echo count($songs); ?></p>
+            <p><?= $_SESSION['current_index'] + 1; ?> of <?= count($songs); ?></p>
             <button class="py-1 px-4" type="submit" name="next">⏭️ Next</button>
         </form>
     </div>

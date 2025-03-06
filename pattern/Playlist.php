@@ -16,6 +16,6 @@ class Playlist
     }
     public function getIterator(): PlaylistIterator
     {
-        return new SongIterator($this->songs);
+        return new PlaylistIterator($this);
     }
 }
